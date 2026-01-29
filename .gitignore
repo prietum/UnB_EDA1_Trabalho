@@ -1,2 +1,5 @@
-.un
-.swp
+*.un
+*.swp
+*~
+*.swo
+*.un~
