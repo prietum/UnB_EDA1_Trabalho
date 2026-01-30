@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 struct dataNascimento {
 	int dia;
@@ -23,6 +25,7 @@ struct clienteCelula *getLastCliente(struct clienteCelula *le){
 	struct clienteCelula *p = le;
 	while (p != NULL && p->prox != NULL)
 		p = p->prox;
+	printf("pega ultimo cliente");
 	return p;
 }
 
@@ -43,13 +46,24 @@ struct clienteCelula *getClienteOfCPF(struct clienteCelula *le, char cpf[12]){
 	return p;
 }
 
-int createCliente(struct clienteCelula *le, struct clienteStruct *cliente){
-	struct clienteCelula *add;
-	add->cliente = cliente;
-	add->prox = NULL;
+int addCliente(struct clienteCelula *le, struct clienteStruct *cliente){
+	printf("fazendo nova celula\n");
+	struct clienteCelula addCel;
+	addCel.cliente = malloc(sizeof(struct clienteStruct));
+	printf("ok1\n");
+	printf("%p, %p\n", addCel.cliente, cliente);
+	addCel.cliente = cliente;
+	printf("ok2\n");
+	addCel.prox = NULL;
+	printf("fez nova celula\n");
+
+	//TODO usar malloc ou algo
+	struct clienteCelula *add = &addCel;
+	printf("fez nova celula ptr\n");
 
 	struct clienteCelula *ult = getLastCliente(le);
 	if (ult != NULL) ult->prox = add;
+	printf("sucesso\n");
 	
 	return 0; //sucesso
 }
@@ -69,5 +83,12 @@ int removeCliente(struct clienteCelula *le, int i){
 
 }
 
-//TODO
-//ADICIONAR FUNCAO QUE PRINTA A LISTA ENCADEADA
+void printClientes(struct clienteCelula *le){
+	struct clienteCelula *p = le;
+	printf("Clientes:\n");
+	while (p!=NULL) {
+		struct clienteStruct *c = p->cliente;
+		printf("\t%s\n\tCPF: %s\n\tE-mail: %s\n\tTelefone: %s\n\tNascido(a) em %d/%d/%d\n\n", c->nome, c->cpf, c->email, c->tel, c->nasc.dia, c->nasc.mes, c->nasc.ano);
+		p = p->prox;
+	}
+}

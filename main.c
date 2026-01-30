@@ -4,17 +4,23 @@ int main(){
 	struct clienteCelula *le; //LISTA ENCADEADA
 	
 	//teste
-	struct dataNascimento nasc = {
-		.dia = 20,
-		.mes = 4,
-		.ano = 1999
-	};
-	struct clienteStruct c = {
-		.nome = "silva da silva",
-		.cpf = "12312312345",
-		.nasc = nasc,
-		.email = "silva@gmail.com",
-		.telefone = "61912341234"
-	};
-	addCliente(le, &c);
+	struct clienteStruct *c = malloc(sizeof(struct clienteStruct));
+	if (c!=NULL){
+		c->nome = "silva da silva";
+		c->cpf = "12312312345";
+		c->email = "silva@gmail.com";
+		c->tel = "61912341234";
+		struct dataNascimento *n = malloc(sizeof(struct dataNascimento));
+		if (n!=NULL){
+			n->dia = 20;
+			n->mes = 6;
+			n->ano = 1999;
+			c->nasc = n;
+		}
+	}
+
+	printf("adicionando cliente");
+	addCliente(le, c);
+	printf("printando cliente");
+	printClientes(le);
 }
