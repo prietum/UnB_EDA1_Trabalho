@@ -1,42 +1,101 @@
-#include "cliente.h"
 #include <stdio.h>
-int main(){
-	//LISTA ENCADEADA
+#include <stdlib.h>
+#include "produtos.h"
+#include "cliente.h"
+#include "structs_produtos.h"
+
+//funcionalidades wip (mudar aqui)
+void gerenciar_clientes();  
+void modo_compra();        
+
+int main() {
+    int opcao_main;
+    List* lista_produtos = NULL;
 	clienteNode *cl_head_ptr = criaListaClientes();
-	
-	//teste
-	insereCliente(cl_head_ptr, "silva da silva", "silvadasilva@gmail.com", "123.456.789-20", "(61) 91234-5678", 20, 12, 1999);
-	insereCliente(cl_head_ptr, "souza de souza", "souzadesouza@gmail.com", "999.888.777-13", "(45) 96666-1234", 1, 7, 2025);
-	//insereCliente(cl_head_ptr, "lima lima", "limalima@gmail.com", "011.022.033-44", "(30) 98767-1000", 15, 3, 1930);
-	//insereCliente(cl_head_ptr, "pedro rocha", "pedroso@gmail.com", "111.222.333-56", "(10) 95324-6544", 3, 11, 1956);
-	//insereCliente(cl_head_ptr, "franscisca francis", "franz@gmail.com", "901.555.345-01", "(31) 97283-9958", 31, 12, 2050);
-	
-	printaListaClientes(cl_head_ptr);
-	
+    
 	//prepara variavel de resultado de busca
 	clienteBuscaResultado *cl_bus_teste = malloc(sizeof(clienteBuscaResultado));
 	int bus_ok;
-	bus_ok = buscaCliente_CPF(cl_bus_teste, cl_head_ptr, "999.888.777-13");
-	if (bus_ok==1){
-		printaCliente(cl_bus_teste->alvo);
-		removeCliente(cl_bus_teste->ante, cl_bus_teste->alvo);
-	} else {
-		printf("Nao encontrado.\n");
-	}
 	
-	printaListaClientes(cl_head_ptr);
-	
-	bus_ok = buscaCliente_CPF(cl_bus_teste, cl_head_ptr, "123.456.789-20");
-	if (bus_ok==1){
-		editaCliente(cl_bus_teste->alvo, "canetao gomes borges de lindeza filho", "canetaobreve@gmail.com", "808.808.707.01", "(70) 98888-7777", 19, 4, 1900);
-	} else {
-		printf("Nao encontrado.\n");
-	}
-	
-	printaListaClientes(cl_head_ptr);
-	
+    lista_produtos = criar_lista();
+    if (lista_produtos == NULL) {
+        printf("Erro ao inicializar sistema de produtos :(\n");
+        return 1;
+    }
+    
+    printf("|-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-|\n");
+    printf(">------ SISTEMA DE GERENCIAMENTO DA LOJA ------<\n");
+    printf("|-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-|\n");
+    
+    do {
+        printf("\n--- MENU PRINCIPAL ---\n");
+        printf("1. Gerenciamento de Clientes\n");
+        printf("2. Gerenciamento de Produtos\n");
+        printf("3. Modo Compra\n");
+        printf("4. Sair do Sistema\n");
+        printf("\nDigite sua opcao desejada: ");
+        
+
+        fflush(stdin);
+        if (scanf("%d", &opcao_main) != 1) {
+            printf("Entrada invalida... Digite um numero.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+        
+        switch(opcao_main) {
+            case 1:
+                printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
+                printf("(inserir o modulo de clientes por aqui)\n");
+
+                break;
+                
+            case 2:
+                printf("\n--- GERENCIAMENTO DE PRODUTOS ---\n");
+
+                if (main_produtos(lista_produtos) == 1) {
+                    printf("Saindo do sistema...\n");
+                    opcao_main = 4; 
+                }
+                break;
+                
+            case 3:
+                printf("\n--- MODO COMPRA ---\n");
+                printf("(inserir o modulo de compras por aqui)\n");
+
+                break;
+                
+            case 4:
+                printf("\nEncerrando sistema...\n");
+                break;
+                
+            default:
+                printf("\nOpcao invalida... Digite um numero entre 1 e 4.\n");
+                break;
+        }
+        
+        if (opcao_main != 4) {
+            printf("\nPressione Enter para voltar ao menu principal...");
+            getchar();
+            getchar(); 
+        }
+        
+    } while (opcao_main != 4);
+    
 	//Procedimento de finalização
-	printf("Programa terminado!\n");
+	printf("Limpando dados...\n");
+    destruir_lista(lista_produtos);
+	printf("Sistema encerrado com sucesso!\n");
 	system("pause");
 	return 0;
+	
+    return 0;
 }
+
+//para abrir aplicação até agr no terminal pra debug e tudo mais
+/*
+gcc -c produtos.c -o produtos.o
+gcc -c main.c -o main.o
+gcc produtos.o main.o -o sistema_loja.exe
+./sistema_loja.exe
+*/
