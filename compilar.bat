@@ -16,36 +16,29 @@ setlocal EnableDelayedExpansion
 rem if not exist %~dp0bin mkdir %~dp0bin
 rem cd %~dp0src
 
-call :CompilarH cliente.h
-call :CompilarC main.c
-
-GOTO Rodar
-
-:CompilarH
-	rem javac %~1.java -d %~dp0bin -Xdiags:verbose
-	gcc %~1
-	if %ERRORLEVEL% EQU 0 (
-		echo %~1 compilou
-		exit /b 0
-		)
+gcc cliente.h
+call :Verifica cliente.h
+gcc -c produtos.c -o produtos.o
+call :Verifica produtos.c
+gcc -c main.c -o main.o
+call :Verifica main.c
+gcc produtos.o main.o -o sistema_loja.exe
+if %ERRORLEVEL% EQU 0 (
+		echo Executavel gerado com sucesso!
+		START sistema_loja
+		exit
+	)
 	if %ERRORLEVEL% NEQ 0 (
 		pause 
 		exit
-		)
-		
-:CompilarC
-	rem javac %~1.java -d %~dp0bin -Xdiags:verbose
-	gcc %~1 -o programa.exe
+	)
+
+:Verifica
 	if %ERRORLEVEL% EQU 0 (
 		echo %~1 compilou
 		exit /b 0
-		)
+	)
 	if %ERRORLEVEL% NEQ 0 (
 		pause 
 		exit
-		)
-
-:Rodar
-	START programa
-	rem system(pause) incluso no final do programa
-	exit
+	)
