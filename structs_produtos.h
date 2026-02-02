@@ -1,22 +1,17 @@
 #ifndef STRUCTS_PRODUTOS_H
 #define STRUCTS_PRODUTOS_H
-#include <stdlib.h>
-
-typedef struct list {
-
-    struct produto *head;
-    int size;
-
-}List;
 
 typedef struct produto {
-
-    char *nome_prod;
+    char nome_prod[101];
     int codigo_unico;
-    int preço;
+    float preco;           
     int quantidade;
-    struct produto *next;
+    struct produto* prox; 
+} Produto;
 
-}Produto;
+typedef struct list {
+    Produto* head;
+    int size;
+} List;
 
 #endif
