@@ -4,25 +4,28 @@
 #include "produtos.h"
 #include "structs_produtos.h"
 
+
 #include "cliente.h"
 #include "structs_cliente.h"
 
+#include "compras.h"
 //funcionalidades wip (mudar aqui)
-void gerenciar_clientes();  
-void modo_compra();        
+void gerenciar_clientes();        
 
 int main() {
     int opcao_main;
     List* lista_produtos = NULL;
+    ListaCarrinhos* lista_carrinhos = NULL;
 	clienteNode *cl_head_ptr = criaListaClientes();
     
-	//prepara variavel de resultado de busca
 	clienteBuscaResultado *cl_bus_teste = malloc(sizeof(clienteBuscaResultado));
 	int bus_ok;
 	
     lista_produtos = criar_lista();
-    if (lista_produtos == NULL) {
-        printf("Erro ao inicializar sistema de produtos :(\n");
+    lista_carrinhos = criar_lista_carrinhos();
+
+    if (lista_produtos == NULL || lista_carrinhos == NULL) {
+        printf("Erro ao inicializar sistema :(\n");
         return 1;
     }
     
@@ -64,7 +67,7 @@ int main() {
                 
             case 3:
                 printf("\n--- MODO COMPRA ---\n");
-                printf("(inserir o modulo de compras por aqui)\n");
+                modo_compra_menu(lista_produtos, lista_carrinhos);
 
                 break;
                 
@@ -85,9 +88,10 @@ int main() {
         
     } while (opcao_main != 4);
     
-	//Procedimento de finalização
+	//finalização
 	printf("Limpando dados...\n");
     destruir_lista(lista_produtos);
+    destruir_lista_carrinhos(lista_carrinhos);
 	printf("Sistema encerrado com sucesso!\n");
 	system("pause");
 	return 0;
@@ -98,7 +102,8 @@ int main() {
 //para abrir aplicação até agr no terminal pra debug e tudo mais
 /*
 gcc -c produtos.c -o produtos.o
+gcc -c compras.c -o compras.o
 gcc -c main.c -o main.o
-gcc produtos.o main.o -o sistema_loja.exe
+gcc produtos.o main.o compras.o -o sistema_loja.exe
 ./sistema_loja.exe
 */
