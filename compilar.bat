@@ -16,13 +16,16 @@ setlocal EnableDelayedExpansion
 rem if not exist %~dp0bin mkdir %~dp0bin
 rem cd %~dp0src
 
-gcc cliente.h
-call :Verifica cliente.h
+gcc -c cliente.c -o cliente.o
+call :Verifica cliente.c
+
 gcc -c produtos.c -o produtos.o
 call :Verifica produtos.c
+
 gcc -c main.c -o main.o
 call :Verifica main.c
-gcc produtos.o main.o -o sistema_loja.exe
+
+gcc cliente.o produtos.o main.o -o sistema_loja.exe
 if %ERRORLEVEL% EQU 0 (
 		echo Executavel gerado com sucesso!
 		START sistema_loja

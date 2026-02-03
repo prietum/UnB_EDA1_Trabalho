@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "produtos.h"
-#include "cliente.h"
 #include "structs_produtos.h"
+
+#include "cliente.h"
+#include "structs_cliente.h"
 
 //funcionalidades wip (mudar aqui)
 void gerenciar_clientes();  
