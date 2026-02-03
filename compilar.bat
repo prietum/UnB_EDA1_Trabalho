@@ -20,9 +20,11 @@ gcc cliente.h
 call :Verifica cliente.h
 gcc -c produtos.c -o produtos.o
 call :Verifica produtos.c
+gcc -c compras.c -o compras.o
+call:Verifica compras.c
 gcc -c main.c -o main.o
 call :Verifica main.c
-gcc produtos.o main.o -o sistema_loja.exe
+gcc produtos.o main.o compras.o -o sistema_loja.exe
 if %ERRORLEVEL% EQU 0 (
 		echo Executavel gerado com sucesso!
 		START sistema_loja
