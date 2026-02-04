@@ -15,10 +15,7 @@ int main() {
     int opcao_main;
     List* lista_produtos = NULL;
     ListaCarrinhos* lista_carrinhos = NULL;
-	clienteNode *cl_head_ptr = criaListaClientes();
-    
-	clienteBuscaResultado *cl_bus_teste = malloc(sizeof(clienteBuscaResultado));
-	int bus_ok;
+	clienteNode *cl_head_ptr = criaListaClientes(); // lista de clientes
 	
     lista_produtos = criar_lista();
     lista_carrinhos = criar_lista_carrinhos();
@@ -52,6 +49,11 @@ int main() {
             case 1:
                 printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
                 printf("(inserir o modulo de clientes por aqui)\n");
+				//ok
+				if (main_cliente(cl_head_ptr) == 1) {
+                    printf("Saindo do sistema...\n");
+                    opcao_main = 4; 
+                }
 
                 break;
                 
@@ -89,6 +91,7 @@ int main() {
     
 	//finalização
 	printf("Limpando dados...\n");
+	destroiListaClientes(cl_head_ptr);
     destruir_lista(lista_produtos);
     destruir_lista_carrinhos(lista_carrinhos);
 	printf("Sistema encerrado com sucesso!\n");
