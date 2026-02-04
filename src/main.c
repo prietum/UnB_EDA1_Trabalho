@@ -8,8 +8,7 @@
 #include "structs_cliente.h"
 
 #include "compras.h"
-//funcionalidades wip (mudar aqui)
-void gerenciar_clientes();        
+       
 
 int main() {
     int opcao_main;
@@ -48,7 +47,7 @@ int main() {
         switch(opcao_main) {
             case 1:
                 printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
-                
+
 				if (main_cliente(cl_head_ptr) == 1) {
                     printf("Saindo do sistema...\n");
                     opcao_main = 4; 
