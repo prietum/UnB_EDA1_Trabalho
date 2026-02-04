@@ -16,6 +16,10 @@ setlocal EnableDelayedExpansion
 rem if not exist %~dp0bin mkdir %~dp0bin
 rem cd %~dp0src
 
+if not exist "/bin" (
+	mkdir bin
+)
+
 gcc -c src/cliente.c -o bin/cliente.o
 call :Verifica cliente.c
 
