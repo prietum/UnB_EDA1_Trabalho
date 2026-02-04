@@ -236,11 +236,11 @@ void cria_cliente_menu(clienteNode *cl_head_ptr) {
         scanf("%d", &anoNasc);
         
 		//debug
-		printf("\nnome %s\nemail %s\ncpf %s\ntel %s\nnasc %d / %d / %d\n", nome, email, cpf, tel, diaNasc, mesNasc, anoNasc);
+		//printf("\nnome %s\nemail %s\ncpf %s\ntel %s\nnasc %d / %d / %d\n", nome, email, cpf, tel, diaNasc, mesNasc, anoNasc);
 		
         clienteNode *cl_node_ptr = insereCliente(cl_head_ptr, nome, email, cpf, tel, diaNasc, mesNasc, anoNasc);
         if (cl_node_ptr != NULL) {
-			printf("Produto cadastrado com sucesso!\n");
+			printf("Cliente cadastrado com sucesso!\n");
             sucessos++;
         }
     }
@@ -308,19 +308,19 @@ void acessa_cliente_menu(clienteNode *cl_head_ptr, clienteNode *cl_alvo_ptr, cli
 				scanf("%d", &anoNasc);
         
 				//debug
-				printf("\nnome %s\nemail %s\ncpf %s\ntel %s\nnasc %d / %d / %d\n", nome, email, cpf, tel, diaNasc, mesNasc, anoNasc);
+				//printf("\nnome %s\nemail %s\ncpf %s\ntel %s\nnasc %d / %d / %d\n", nome, email, cpf, tel, diaNasc, mesNasc, anoNasc);
 				
 				int edit_ok = editaCliente(cl_alvo_ptr, nome, email, cpf, tel, diaNasc, mesNasc, anoNasc);
 
 				if (edit_ok == 1) {
-					printf("Produto editado com sucesso :)\n");
+					printf("Cliente editado com sucesso :)\n");
 				} else {
-					printf("Erro ao editar produto :(\n");
+					printf("Erro ao editar cliente :(\n");
 				}
 				return;
 			case 2:
 				removeCliente(cl_alvo_ptr, cl_ante_ptr);
-				printf("Produto removido com sucesso!\n");
+				printf("Cliente removido com sucesso!\n");
 				return;
 			case 3:
 				printf("Voltando...\n");

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "compras.h"
+#include "cliente.h"
 #include "produtos.h"
 
 
@@ -30,14 +31,14 @@ void destruir_lista_carrinhos(ListaCarrinhos* lista) {
 }
 
 
-Carrinho* criar_carrinho(int cpf_cliente) {
+Carrinho* criar_carrinho(clienteNode *cl_alvo_ptr) {
     Carrinho* novo = (Carrinho*)malloc(sizeof(Carrinho));
     if (novo == NULL) {
         printf("Erro ao criar carrinho!\n");
         return NULL;
     }
     
-    novo->cpf_cliente = cpf_cliente;
+    novo->cl_node_ptr = cl_alvo_ptr;
     novo->itens = NULL;
     novo->total_itens = 0;
     novo->valor_total = 0.0;
@@ -70,7 +71,6 @@ int adicionar_ao_carrinho(Carrinho* carrinho, ItemCarrinho* item) {
     if (carrinho == NULL || item == NULL) {
         return 0;
     }
-    
 
     ItemCarrinho* atual = carrinho->itens;
     while (atual != NULL) {
@@ -138,6 +138,7 @@ void limpar_carrinho(Carrinho* carrinho) {
         free(temp);
     }
     
+	carrinho->cl_node_ptr = NULL; // assim?
     carrinho->itens = NULL;
     carrinho->total_itens = 0;
     carrinho->valor_total = 0.0;
@@ -151,7 +152,7 @@ void exibir_carrinho(Carrinho* carrinho) {
     }
     
     printf("--------CARRINHO DE COMPRAS--------\n");
-    printf("Cliente (CPF): %d\n", carrinho->cpf_cliente);
+    printf("Cliente (CPF): %s\n", carrinho->cl_node_ptr->data->cpf);
     printf("Total de itens: %d\n", carrinho->total_itens);
     printf("\n");
     
@@ -178,6 +179,17 @@ void exibir_carrinho(Carrinho* carrinho) {
     printf("----------------------------------------\n");
 }
 
+void exibir_lista_carrinhos(ListaCarrinhos* lista){
+	if (lista == NULL) return;
+	Carrinho* atual = lista->head;
+	
+	printf("--------CARRINHOS CADASTRADOS--------\n");
+	
+	while (atual != NULL) {
+        exibir_carrinho(atual);
+        atual = atual->prox;
+    }
+}
 
 float calcular_total_carrinho(Carrinho* carrinho) {
     if (carrinho == NULL) return 0.0;
@@ -194,12 +206,12 @@ float calcular_total_carrinho(Carrinho* carrinho) {
 }
 
 
-Carrinho* buscar_carrinho_por_cliente(ListaCarrinhos* lista, int cpf_cliente) {
+Carrinho* buscar_carrinho_por_cliente(ListaCarrinhos* lista, clienteNode *cl_alvo_ptr) {
     if (lista == NULL) return NULL;
     
     Carrinho* atual = lista->head;
     while (atual != NULL) {
-        if (atual->cpf_cliente == cpf_cliente) {
+        if (atual->cl_node_ptr == cl_alvo_ptr) {
             return atual;
         }
         atual = atual->prox;
@@ -208,7 +220,7 @@ Carrinho* buscar_carrinho_por_cliente(ListaCarrinhos* lista, int cpf_cliente) {
     return NULL;
 }
 
-// confirmq compra (atualizar lista base)
+// confirma compra (atualizar lista base)
 int finalizar_compra(Carrinho* carrinho, List* lista_produtos) {
     if (carrinho == NULL || lista_produtos == NULL || carrinho->itens == NULL) {
         return 0;
@@ -242,7 +254,7 @@ int finalizar_compra(Carrinho* carrinho, List* lista_produtos) {
     
     // Gera recibo
     printf("\n--------COMPRA FINALIZADA--------\n");
-    printf("Cliente: CPF %d\n", carrinho->cpf_cliente);
+    printf("Cliente: CPF %s\n", carrinho->cl_node_ptr->data->cpf);
     printf("Data: %s\n", __DATE__);
     printf("Hora: %s\n", __TIME__);
     printf("\nItens comprados:\n");
@@ -397,36 +409,20 @@ void finalizar_compra_menu(Carrinho* carrinho, List* lista_produtos) {
 }
 
 // Menu compra
-void modo_compra_menu(List* lista_produtos, ListaCarrinhos* lista_carrinhos) {
-    int opcao, cpf_cliente;
-    Carrinho* carrinho_atual = NULL;
-    
- 
-    printf("\n-------- MODO COMPRA --------\n");
-    printf("Digite o CPF do cliente (apenas numeros): ");
-    scanf("%d", &cpf_cliente);
-    
-  
-    carrinho_atual = buscar_carrinho_por_cliente(lista_carrinhos, cpf_cliente);
-    if (carrinho_atual == NULL) {
-        carrinho_atual = criar_carrinho(cpf_cliente);
-        if (carrinho_atual == NULL) {
-            printf("Erro ao criar carrinho!\n");
-            return;
-        }
-        carrinho_atual->prox = lista_carrinhos->head;
-        lista_carrinhos->head = carrinho_atual;
-        lista_carrinhos->size++;
-    }
-    
-    do {
-        printf("\n=== CARRINHO - CLIENTE CPF: %d ===\n", cpf_cliente);
+void modo_compra_acesso_menu(List* lista_produtos, Carrinho* carrinho_atual){
+	clienteNode *cl_node_ptr = carrinho_atual->cl_node_ptr;
+	int opcao;
+	
+	while (1) {
+        printf("\n=== MODO COMPRA - CARRINHO do(a) %s ===\n", cl_node_ptr->data->nome);
+		
+		listar_carrinho_menu(carrinho_atual);
+		
         printf("1. Adicionar produto ao carrinho\n");
         printf("2. Remover produto do carrinho\n");
-        printf("3. Listar carrinho\n");
-        printf("4. Finalizar compra\n");
-        printf("5. Limpar carrinho\n");
-        printf("6. Voltar ao menu principal\n");
+        printf("3. Finalizar compra\n");
+        printf("4. Limpar carrinho\n");
+        printf("5. Voltar ao menu de busca de carrinhos\n");
         printf("\nOpcao: ");
         scanf("%d", &opcao);
         
@@ -438,28 +434,125 @@ void modo_compra_menu(List* lista_produtos, ListaCarrinhos* lista_carrinhos) {
                 remover_produto_carrinho_menu(carrinho_atual);
                 break;
             case 3:
-                listar_carrinho_menu(carrinho_atual);
-                break;
-            case 4:
                 finalizar_compra_menu(carrinho_atual, lista_produtos);
                 break;
-            case 5:
+            case 4:
                 limpar_carrinho(carrinho_atual);
                 printf("Carrinho limpo!\n");
                 break;
-            case 6:
+            case 5:
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
                 printf("Opcao invalida :(\n");
                 break;
         }
-        
-        if (opcao != 6) {
-            printf("\nPressione Enter para continuar...");
-            getchar();
-            getchar();
+    }
+}
+
+void modo_compra_busca_menu(List* lista_produtos, ListaCarrinhos* lista_carrinhos, clienteNode *cl_head_ptr) {
+    int opcao;
+    Carrinho* carrinho_atual = NULL;
+ 
+	clienteBuscaResultado *busca = malloc(sizeof(clienteBuscaResultado));
+	int busca_ok = 0;
+	
+	char cpf[15];
+	char tel[16];
+	
+	do {
+		printf("\n-------- MODO COMPRA - CARRINHOS --------\n");
+		printf("1. Buscar carrinho por CPF do cliente\n");
+		printf("2. Buscar carrinho por telefone do cliente\n");
+		printf("3. Listar carrinhos\n");
+		printf("4. Voltar ao menu principal\n");
+		scanf("%d", &opcao);
+		
+		//printf("%d\n",opcao);
+		
+		switch(opcao){
+		case 1:
+			if (cl_head_ptr->prox==NULL) {
+				printf("Nao ha clientes cadastrados.\n");
+				break;
+			}
+			printf("Digite o CPF do cliente (xxx.xxx.xxx-xx): ");
+			getchar();
+			fgets(cpf, 15, stdin);
+			cpf[strcspn(cpf, "\n")] = '\0';
+			
+			busca_ok = buscaCliente_CPF(busca, cl_head_ptr, cpf);
+			break;
+			
+		case 2:
+			if (cl_head_ptr->prox==NULL) {
+				printf("Nao ha clientes cadastrados.\n");
+				break;
+			}
+			printf("Digite o telefone do cliente ((xx) 9xxxx-xxxx): ");
+			getchar();
+			fgets(tel, 16, stdin);
+			tel[strcspn(tel, "\n")] = '\0';
+			
+			busca_ok = buscaCliente_tel(busca, cl_head_ptr, tel);
+			break;
+			
+		case 3:
+			if (cl_head_ptr->prox==NULL) {
+				printf("Nao ha clientes cadastrados.\n");
+				break;
+			}
+			if (lista_carrinhos->head==NULL) {
+				printf("Nao ha carrinhos cadastrados.\n");
+				break;
+			}
+			exibir_lista_carrinhos(lista_carrinhos);
+			break;
+			
+		case 4:
+			printf("Voltando...\n");
+			return;
+
+		default:
+			printf("Opcao invalida :(\n");
+			break;
         }
-        
-    } while (opcao != 6);
+		
+		if (opcao<3) {
+			if (busca_ok == 1) {
+				printf("Cliente encontrado.\n");
+				
+				clienteNode *cl_alvo_ptr = busca->alvo;
+			
+				//pegar/criar carrinho
+				carrinho_atual = buscar_carrinho_por_cliente(lista_carrinhos, cl_alvo_ptr);
+				if (carrinho_atual == NULL) {
+					printf("O cliente nao possui um carrinho. Criando carrinho...\n");
+					carrinho_atual = criar_carrinho(cl_alvo_ptr);
+					
+					//creio que fica aqui esse bloco
+					carrinho_atual->prox = lista_carrinhos->head;
+					lista_carrinhos->head = carrinho_atual;
+					lista_carrinhos->size++;
+					//
+				} else {printf("Carrinho encontrado.\n");} 
+				if (carrinho_atual == NULL) {
+					printf("Erro ao criar carrinho!\n");
+					return;
+				}
+			
+				modo_compra_acesso_menu(lista_produtos, carrinho_atual);
+			} else if (busca_ok == 0 && cl_head_ptr->prox!=NULL) {
+				printf("Cliente nao encontrado!\n");
+			} else if (busca_ok == 2) {
+				if (opcao == 1) {
+					printf("CPF digitado incorretamente!\n");
+				} else if (opcao == 2) {
+					printf("Telefone digitado incorretamente!\n");
+				}
+			}
+		}
+		
+		busca_ok = 0;
+	} while (opcao !=4);
 }

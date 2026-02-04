@@ -68,7 +68,7 @@ int main() {
                 
             case 3:
                 printf("\n--- MODO COMPRA ---\n");
-                modo_compra_menu(lista_produtos, lista_carrinhos);
+                modo_compra_busca_menu(lista_produtos, lista_carrinhos, cl_head_ptr);
 
                 break;
                 

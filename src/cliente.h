@@ -16,6 +16,7 @@ struct clienteNode * criaListaClientes();
 struct clienteNode * insereCliente(struct clienteNode *cl_head_ptr, char nome[80], char email[80], char cpf[15], char tel[16], int diaNasc, int mesNasc, int anoNasc);
 int editaCliente(struct clienteNode *cl_node_ptr, char nome[80], char email[80], char cpf[15], char tel[16], int diaNasc, int mesNasc, int anoNasc);
 int buscaCliente_CPF(struct clienteBuscaResultado *cl_bus, struct clienteNode *cl_head_ptr, char cpf[15]);
+int buscaCliente_tel(struct clienteBuscaResultado *cl_bus, struct clienteNode *cl_head_ptr, char tel[16]);
 void removeCliente(struct clienteNode *cl_ante_ptr, struct clienteNode *cl_alvo_ptr);
 void printaCliente(struct clienteNode *cl_node_ptr);
 void printaListaClientes(struct clienteNode *cl_head_ptr);
