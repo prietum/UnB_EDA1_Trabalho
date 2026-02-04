@@ -48,8 +48,7 @@ int main() {
         switch(opcao_main) {
             case 1:
                 printf("\n--- GERENCIAMENTO DE CLIENTES ---\n");
-                printf("(inserir o modulo de clientes por aqui)\n");
-				//ok
+                
 				if (main_cliente(cl_head_ptr) == 1) {
                     printf("Saindo do sistema...\n");
                     opcao_main = 4; 

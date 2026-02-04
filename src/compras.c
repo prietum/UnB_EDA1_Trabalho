@@ -138,7 +138,7 @@ void limpar_carrinho(Carrinho* carrinho) {
         free(temp);
     }
     
-	carrinho->cl_node_ptr = NULL; // assim?
+	//carrinho->cl_node_ptr = NULL; // assim?
     carrinho->itens = NULL;
     carrinho->total_itens = 0;
     carrinho->valor_total = 0.0;
@@ -412,9 +412,14 @@ void finalizar_compra_menu(Carrinho* carrinho, List* lista_produtos) {
 void modo_compra_acesso_menu(List* lista_produtos, Carrinho* carrinho_atual){
 	clienteNode *cl_node_ptr = carrinho_atual->cl_node_ptr;
 	int opcao;
+
+    if (cl_node_ptr == NULL || cl_node_ptr->data == NULL) {
+        printf("Erro: Cliente associado ao carrinho e invalido :(\n");
+        return;
+    }
 	
 	while (1) {
-        printf("\n=== MODO COMPRA - CARRINHO do(a) %s ===\n", cl_node_ptr->data->nome);
+        printf("\n=== MODO COMPRA - CARRINHO do(a) %s ===\n", cl_node_ptr->data->nome ? cl_node_ptr->data->nome : "cliente Desconhecido");
 		
 		listar_carrinho_menu(carrinho_atual);
 		
@@ -437,12 +442,15 @@ void modo_compra_acesso_menu(List* lista_produtos, Carrinho* carrinho_atual){
                 finalizar_compra_menu(carrinho_atual, lista_produtos);
                 break;
             case 4:
-                limpar_carrinho(carrinho_atual);
-                printf("Carrinho limpo!\n");
+                if (carrinho_atual->itens == NULL) {
+                    printf("Carrinho ja esta vazio :)\n");
+                }
+                else {limpar_carrinho(carrinho_atual);
+                printf("Carrinho limpo!\n");}
                 break;
             case 5:
                 printf("Voltando ao menu principal...\n");
-                break;
+                return;
             default:
                 printf("Opcao invalida :(\n");
                 break;
